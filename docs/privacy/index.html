@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Flipper Messenger Privacy Policy</title>
+  <style>
+    body{margin:0;background:#101114;color:#e8e8eb;font:16px/1.6 system-ui,sans-serif}
+    main{max-width:820px;margin:auto;padding:32px 20px 64px}
+    h1,h2{color:#ff8200;line-height:1.25}a{color:#ffad55}small{color:#b8b8c0}
+  </style>
+</head>
+<body><main>
+  <h1>Flipper Messenger Privacy Policy</h1>
+  <p><small>Effective September 28, 2026</small></p>
+  <p>Flipper Messenger is provided by KernFerm. It is a local companion application that connects a user-owned Android phone to a user-owned Flipper Zero. It has no developer-operated server, cloud account, advertising, analytics, tracking, or crash telemetry.</p>
+  <h2>Data the application handles</h2>
+  <p>The Android application handles nearby Bluetooth device information, contact names and phone numbers explicitly selected by the user, SMS recipient numbers and message bodies the user chooses to send, newly received SMS sender numbers and message bodies, Android SMS sent/delivery results, and notification state required for the active connection.</p>
+  <p>It does not request permission to read stored SMS history, call logs, place or manage phone calls, use the microphone or camera, or access general files. On modern Android it does not use location data.</p>
+  <h2>How data is used</h2>
+  <p>The data is used only to establish the authorized Bluetooth connection, copy contacts selected by the user to the Flipper, send carrier SMS explicitly confirmed by the user, forward newly received SMS to the authorized Flipper, display real delivery state, and prevent duplicate SMS requests.</p>
+  <h2>Storage and retention</h2>
+  <p>The Android application stores a Keystore-protected authorization key, the selected Flipper address, the selected SIM preference, and a bounded request-status ledger in application-private storage. Incoming message content and synced contacts are not retained in Android application storage.</p>
+  <p>Selected contacts, drafts, quick messages, a bounded ten-entry incoming inbox, recent outgoing records, and the Flipper-side authorization key are stored locally in private application storage on the user's Flipper microSD card. The application does not upload this information to KernFerm or any third party.</p>
+  <h2>Sharing and transfer</h2>
+  <p>The application does not sell, rent, or share personal data with KernFerm, advertisers, data brokers, analytics providers, or other third parties. User-requested SMS content is necessarily provided to Android's SMS service, the user's mobile carrier, and the intended recipient to perform the requested message delivery. Selected contacts and message data are transferred locally between the user's phone and authorized Flipper over an encrypted Bluetooth session.</p>
+  <h2>User control and deletion</h2>
+  <p>Users can choose which contacts to sync and can use manual number entry without granting Contacts permission. <strong>Forget authorization</strong> removes the Android authorization relationship. On the Flipper, <strong>Forget phone</strong> removes its link key and <strong>Clear private data</strong> removes locally stored contacts, drafts, message history, and authorization data. Uninstalling the Android application removes its application-private data.</p>
+  <h2>Security</h2>
+  <p>Bluetooth bonding, a physical authorization window, authenticated encryption, replay rejection, bounded storage, and duplicate-request protection are used to protect the local connection. No system can be guaranteed completely secure, and users should protect physical access to both devices.</p>
+  <h2>Children</h2>
+  <p>Flipper Messenger is not directed to children under 13 and does not knowingly collect children's personal information.</p>
+  <h2>Changes</h2>
+  <p>Material changes will be published on this page with a revised effective date.</p>
+  <h2>Contact</h2>
+  <p>For privacy questions or requests, open an issue at <a href="https://github.com/KernFerm/Flipper-Messenger/issues">github.com/KernFerm/Flipper-Messenger/issues</a>.</p>
+</main></body>
+</html>

@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.FlipperMessenger" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#FF8200</item>
+        <item name="android:navigationBarColor">#111111</item>
+        <item name="android:statusBarColor">#111111</item>
+    </style>
+</resources>
+

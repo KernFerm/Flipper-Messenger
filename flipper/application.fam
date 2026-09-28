@@ -1,0 +1,14 @@
+App(
+    appid="flipper_messenger",
+    name="Flipper Messenger",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="flipper_messenger_app",
+    requires=["gui", "storage", "bt"],
+    stack_size=4096,
+    fap_category="Tools",
+    fap_version="0.0.10",
+    fap_description="Compose SMS requests for an authorized Android phone",
+    fap_author="KernFerm",
+    fap_weburl="https://github.com/KernFerm/Flipper-Messenger",
+)
+

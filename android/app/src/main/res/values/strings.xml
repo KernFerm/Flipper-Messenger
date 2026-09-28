@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Flipper Messenger</string>
+    <string name="channel_name">Flipper connection</string>
+    <string name="service_notification">Flipper Bluetooth connection active</string>
+</resources>
+

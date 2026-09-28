@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Flipper Messenger connects an authorized Android phone and Flipper Zero for user-confirmed carrier SMS.">
+  <title>Flipper Messenger</title>
+  <style>
+    :root{color-scheme:dark}*{box-sizing:border-box}
+    body{margin:0;background:#101114;color:#e8e8eb;font:17px/1.6 system-ui,sans-serif}
+    main{max-width:860px;margin:auto;padding:64px 22px}
+    h1{margin:0;color:#ff8200;font-size:clamp(2.3rem,7vw,4.5rem);line-height:1.05}
+    h2{color:#ffad55}.lead{font-size:1.2rem;color:#cfcfd5;max-width:720px}
+    .card{margin:28px 0;padding:22px;border:1px solid #3c3e46;border-radius:18px;background:#22242a}
+    a{color:#ffad55}a.button{display:inline-block;margin:8px 10px 8px 0;padding:11px 16px;border-radius:10px;background:#ff8200;color:#101114;font-weight:700;text-decoration:none}
+    code{background:#343740;padding:.15em .4em;border-radius:.35em}footer{margin-top:42px;color:#aaaab2}
+  </style>
+</head>
+<body><main>
+  <h1>Flipper Messenger</h1>
+  <p class="lead">Compose, send, receive, and reply to carrier SMS from a user-owned Flipper Zero through an authorized Android phone.</p>
+  <div class="card">
+    <h2>How it works</h2>
+    <p>The Flipper has no cellular modem. The Android companion performs real carrier SMS operations after bonded Bluetooth setup and a physical authorization step. The connection uses authenticated encryption, replay rejection, and duplicate-send protection.</p>
+    <p>Current versions: Android <strong>0.0.45</strong> and Flipper application <strong>0.0.10</strong>.</p>
+  </div>
+  <div class="card">
+    <h2>Requirements</h2>
+    <p>An Android 8.0 or newer phone with SMS service, a Flipper Zero running official firmware 1.4.3 or newer, and a microSD card are required. Carrier messaging charges may apply.</p>
+  </div>
+  <a class="button" href="privacy/">Privacy policy</a>
+  <a class="button" href="https://github.com/KernFerm/Flipper-Messenger">Source and releases</a>
+  <footer>GNU GPL v3 or later. Use only with devices, service, recipients, and messages you are authorized to use.</footer>
+</main></body>
+</html>
