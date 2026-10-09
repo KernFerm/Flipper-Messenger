@@ -2,7 +2,7 @@
 
 Flipper Messenger turns a Flipper Zero into a small, smartwatch-style composer for legitimate SMS messages sent by the owner's authorized Android phone. The Flipper has no cellular modem: the included Android companion performs the real SMS operation and returns only actual Android/carrier status.
 
-Current versions: Flipper application **0.0.10** and Android companion **0.0.45**.
+Current versions: Flipper application **0.0.10** and Android companion **0.1.1** (Google Play version code 46).
 
 ## What works
 
@@ -15,6 +15,8 @@ Current versions: Flipper application **0.0.10** and Android companion **0.0.45*
 - real-time forwarding of newly received SMS to a bounded Flipper inbox, with reply composition;
 - distinct Requested, Accepted, Sent, Delivered, and Failed states—no simulated delivery;
 - least-privilege Android permissions and local-only data handling.
+- an in-app selector for 25 Android interface languages;
+- an in-app Flipper download page with the official `.fap` link and Windows command-line installation instructions.
 
 ## Install the Flipper application
 
@@ -45,7 +47,7 @@ The Flipper file is a `.fap` file (not `.fab`). Official Flipper firmware 1.4.3 
 
 ## Install the Android companion
 
-The Android companion is distributed directly as `flipper-messenger-android-0.0.45.apk`; it is not available through Google Play. Android 8.0 or newer is required.
+The Android companion is distributed as `flipper-messenger-android-0.1.1.apk` and through the configured Google Play closed-testing track. Android 8.0 or newer is required.
 
 1. Download the APK from this project's GitHub release using the phone, or copy it to the phone by USB.
 2. Open the APK from the browser's downloads screen or the Files application.
@@ -55,6 +57,16 @@ The Android companion is distributed directly as `flipper-messenger-android-0.0.
 6. After installation, disable **Install unknown apps** again if desired.
 
 Only install APKs downloaded from this project's official release page. Android updates must be signed by the same release key; a differently signed build cannot update the installed application without uninstalling it first.
+
+### Change the Android app language
+
+Open **Flipper Messenger → Language → Choose app language**, then choose one of the 25 listed languages. The choice is stored by Android and remains active after restarting the app.
+
+### Download the Flipper `.fap` from Android
+
+Open **Flipper Messenger → Flipper Zero application → Download and install .fap**. The page downloads the unchanged Flipper application version **0.0.10** to the phone's Downloads folder and shows copyable one-line commands for installing it from a Windows computer. The `.fap` cannot run on the phone itself.
+
+To move the file to Windows, connect the phone by USB, select **File transfer** in Android's USB notification, and copy `Internal shared storage\Download\flipper_messenger.fap` to the computer. Alternatively, select **Share downloaded .fap** in the app and use Quick Share, Google Drive, OneDrive, Dropbox, or email; then open or download the shared file on the computer.
 
 ## First-time setup
 

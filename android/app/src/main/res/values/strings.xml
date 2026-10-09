@@ -1,6 +1,66 @@
-<resources>
-    <string name="app_name">Flipper Messenger</string>
-    <string name="channel_name">Flipper connection</string>
-    <string name="service_notification">Flipper Bluetooth connection active</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">Flipper Messenger</string>
+    <string name="channel_name" tools:ignore="MissingTranslation">Flipper connection</string>
+    <string name="service_notification" tools:ignore="MissingTranslation">Flipper Bluetooth connection active</string>
+    <string name="app_subtitle">Compose, read new SMS, and reply from Flipper through your phone.</string>
+    <string name="connection">Connection</string>
+    <string name="starting">Starting…</string>
+    <string name="scan_flipper">Scan for my Flipper</string>
+    <string name="scan_for_flipper">Scan for Flipper</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="authorize_once">Authorize once</string>
+    <string name="authorize_steps" tools:ignore="MissingTranslation">1  Flipper: Settings → Authorize phone (60s)\n2  Phone: tap Authorize this phone\n3  Confirm the Bluetooth PIN on both devices</string>
+    <string name="authorize_phone">Authorize this phone</string>
+    <string name="forget_authorization">Forget authorization</string>
+    <string name="forget_phone_title" tools:ignore="MissingTranslation">Forget phone?</string>
+    <string name="forget_phone_message" tools:ignore="MissingTranslation">This removes Android’s link key. Also choose Forget phone on the Flipper.</string>
+    <string name="cancel">Cancel</string>
+    <string name="forget">Forget</string>
+    <string name="permissions">Permissions</string>
+    <string name="grant_permissions">Grant required permissions</string>
+    <string name="open_app_settings">Open Android app settings</string>
+    <string name="sms_contacts">SMS &amp; contacts</string>
+    <string name="sms_contacts_info">Choose the sending SIM. Only contacts you check are copied to Flipper; inbox and call logs are never read.</string>
+    <string name="select_sync_contacts">Select and sync contacts</string>
+    <string name="about_privacy">About &amp; privacy</string>
+    <string name="about_text" tools:ignore="MissingTranslation">Version %1$s\n\nSend to any valid number entered on Flipper while this phone is connected and authorized. No cloud, ads, analytics, stored-inbox access, call logs, or phone-call permission. Link keys are protected by Android Keystore and request IDs prevent accidental duplicate sends.\n\nGNU GPL v3 or later.</string>
+    <string name="view_privacy">View privacy policy</string>
+    <string name="language_section">Language</string>
+    <string name="language_info">Choose the language used by the Android companion.</string>
+    <string name="choose_language">Choose app language</string>
+    <string name="language_title">App language</string>
+    <string name="language_applied">Language changed</string>
+    <string name="flipper_app_section">Flipper Zero application</string>
+    <string name="flipper_app_info">Download Flipper Messenger 0.0.10 for Flipper Zero and view computer installation instructions.</string>
+    <string name="open_flipper_download">Download and install .fap</string>
+    <string name="flipper_install_title">Flipper app 0.0.10</string>
+    <string name="download_fap">Download .fap to this phone</string>
+    <string name="open_release_page">Open GitHub release</string>
+    <string name="download_started">Download started. Open the Downloads folder when it finishes.</string>
+    <string name="download_failed">Could not start the download. Open the GitHub release instead.</string>
+    <string name="install_intro">The .fap cannot run on Android. Download it to your phone, send it to your computer, connect the Flipper by USB, close qFlipper, and run one of the commands below.</string>
+    <string name="transfer_heading" tools:ignore="MissingTranslation">Move the .fap from phone to computer</string>
+    <string name="transfer_steps" tools:ignore="MissingTranslation">USB cable:\n1. Connect the phone to the Windows computer.\n2. On the phone, open the USB notification and choose File transfer.\n3. On Windows, open File Explorer → This PC → your phone → Internal shared storage → Download.\n4. Copy flipper_messenger.fap into the computer’s Downloads folder.\n\nWithout a cable:\nTap Share downloaded .fap below, choose the file from Downloads, then send it with Quick Share, Google Drive, OneDrive, Dropbox, or email. Open or download that file on the computer.</string>
+    <string name="share_fap" tools:ignore="MissingTranslation">Share downloaded .fap</string>
+    <string name="share_fap_title" tools:ignore="MissingTranslation">Send .fap to computer</string>
+    <string name="choose_fap_first" tools:ignore="MissingTranslation">Choose flipper_messenger.fap from the Downloads folder.</string>
+    <string name="cmd_heading" tools:ignore="MissingTranslation">Windows Command Prompt (one line)</string>
+    <string name="powershell_heading" tools:ignore="MissingTranslation">PowerShell (one line)</string>
+    <string name="install_finish" tools:ignore="MissingTranslation">The command copies the file to /ext/apps/Tools/flipper_messenger.fap and launches it. On Flipper you can later open Apps → Tools → Flipper Messenger.</string>
+    <string name="copy_command">Copy command</string>
+    <string name="command_copied">Command copied</string>
+    <string name="granted">Granted</string>
+    <string name="required">Required</string>
+    <string name="not_required">Not Required</string>
+    <string name="permission_bluetooth_new" tools:ignore="MissingTranslation">Scan %1$s, Connect %2$s</string>
+    <string name="permission_bluetooth_old" tools:ignore="MissingTranslation">Location for BLE scan: %1$s</string>
+    <string name="permission_summary" tools:ignore="MissingTranslation">Bluetooth: %1$s\nContacts: %2$s\nSend SMS: %3$s\nReceive new SMS: %4$s\nRead stored SMS: %5$s\nPhone/calls: %5$s</string>
+    <string name="default_sim">Android default SIM</string>
+    <string name="grant_sms_first">Grant SMS permission first</string>
+    <plurals name="flippers_found" tools:ignore="MissingTranslation"><item quantity="one">Choose Flipper (%d found)</item><item quantity="other">Choose Flipper (%d found)</item></plurals>
+    <string name="choose_flipper">Choose your Flipper</string>
+    <string name="rescan">Rescan</string>
+    <string name="select_contacts">Select up to 50 contacts to copy to Flipper</string>
+    <string name="sync_contacts">Sync selected contacts</string>
 </resources>
 

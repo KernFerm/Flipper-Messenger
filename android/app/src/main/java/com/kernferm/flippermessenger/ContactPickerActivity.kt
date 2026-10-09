@@ -39,14 +39,14 @@ class ContactPickerActivity : AppCompatActivity() {
             setResult(Activity.RESULT_OK, Intent().putStringArrayListExtra("names", names).putStringArrayListExtra("phones", phones))
             finish()
         }
-        root.addView(TextView(this).apply { text = "Select up to 50 contacts to copy to Flipper"; textSize = 18f })
+        root.addView(TextView(this).apply { text = getString(R.string.select_contacts); textSize = 18f })
         root.addView(Button(this).apply {
-            text = "Sync selected contacts"
+            text = getString(R.string.sync_contacts)
             setOnClickListener { syncSelection() }
         })
         root.addView(list, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
         root.addView(Button(this).apply {
-            text = "Sync selected contacts"
+            text = getString(R.string.sync_contacts)
             setOnClickListener { syncSelection() }
         })
         setContentView(root)

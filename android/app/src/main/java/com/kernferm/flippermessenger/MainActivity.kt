@@ -82,49 +82,61 @@ class MainActivity : AppCompatActivity(), MessengerService.Listener {
             insets
         }
         root.addView(TextView(this).apply {
-            text = "Flipper Messenger"
+            text = getString(R.string.app_name)
             textSize = 30f
             setTypeface(typeface, Typeface.BOLD)
             setTextColor(Color.rgb(255, 130, 0))
         })
         root.addView(TextView(this).apply {
-            text = "Compose, read new SMS, and reply from Flipper through your phone."
+            text = getString(R.string.app_subtitle)
             textSize = 15f
             setTextColor(Color.LTGRAY)
             setPadding(0, dp(2), 0, dp(14))
         })
-        root.addView(card("Connection") {
-            status = body("Starting…").also(::addView)
-            devicesButton = button("Scan for my Flipper") { service?.startScan() }.also(::addView)
-            addView(secondaryButton("Disconnect") { service?.disconnect() })
+        root.addView(card(getString(R.string.connection)) {
+            status = body(getString(R.string.starting)).also(::addView)
+            devicesButton = button(getString(R.string.scan_flipper)) { service?.startScan() }.also(::addView)
+            addView(secondaryButton(getString(R.string.disconnect)) { service?.disconnect() })
         })
-        root.addView(card("Authorize once") {
-            addView(body("1  Flipper: Settings → Authorize phone (60s)\n2  Phone: tap Authorize this phone\n3  Confirm the Bluetooth PIN on both devices"))
-            addView(button("Authorize this phone") { service?.provision() })
-            addView(secondaryButton("Forget authorization") {
-                AlertDialog.Builder(this@MainActivity).setTitle("Forget phone?")
-                    .setMessage("This removes Android's link key. Also choose Forget phone on the Flipper.")
-                    .setNegativeButton("Cancel", null).setPositiveButton("Forget") { _, _ -> service?.forget() }.show()
+        root.addView(card(getString(R.string.authorize_once)) {
+            addView(body(getString(R.string.authorize_steps)))
+            addView(button(getString(R.string.authorize_phone)) { service?.provision() })
+            addView(secondaryButton(getString(R.string.forget_authorization)) {
+                AlertDialog.Builder(this@MainActivity).setTitle(R.string.forget_phone_title)
+                    .setMessage(R.string.forget_phone_message)
+                    .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.forget) { _, _ -> service?.forget() }.show()
             })
         })
-        root.addView(card("Permissions") {
+        root.addView(card(getString(R.string.permissions)) {
             permissionState = body("").also(::addView)
-            addView(button("Grant required permissions") { PermissionManager.request(this@MainActivity) })
-            addView(secondaryButton("Open Android app settings") {
+            addView(button(getString(R.string.grant_permissions)) { PermissionManager.request(this@MainActivity) })
+            addView(secondaryButton(getString(R.string.open_app_settings)) {
                 startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
             })
         })
-        root.addView(card("SMS & contacts") {
-            addView(body("Choose the sending SIM. Only contacts you check are copied to Flipper; inbox and call logs are never read."))
+        root.addView(card(getString(R.string.sms_contacts)) {
+            addView(body(getString(R.string.sms_contacts_info)))
             simSpinner = Spinner(this@MainActivity).also(::addView)
-            addView(button("Select and sync contacts") {
+            addView(button(getString(R.string.select_sync_contacts)) {
                 if (!PermissionManager.contactsGranted(this@MainActivity)) PermissionManager.request(this@MainActivity)
                 else contactPicker.launch(Intent(this@MainActivity, ContactPickerActivity::class.java))
             })
         })
-        root.addView(card("About & privacy") {
-            addView(body("Version ${BuildConfig.VERSION_NAME}\n\nSend to any valid number entered on Flipper while this phone is connected and authorized. No cloud, ads, analytics, stored-inbox access, call logs, or phone-call permission. Link keys are protected by Android Keystore and request IDs prevent accidental duplicate sends.\n\nGNU GPL v3 or later."))
-            addView(secondaryButton("View privacy policy") {
+        root.addView(card(getString(R.string.language_section)) {
+            addView(body(getString(R.string.language_info)))
+            addView(button(getString(R.string.choose_language)) {
+                startActivity(Intent(this@MainActivity, LanguageActivity::class.java))
+            })
+        })
+        root.addView(card(getString(R.string.flipper_app_section)) {
+            addView(body(getString(R.string.flipper_app_info)))
+            addView(button(getString(R.string.open_flipper_download)) {
+                startActivity(Intent(this@MainActivity, FlipperInstallActivity::class.java))
+            })
+        })
+        root.addView(card(getString(R.string.about_privacy)) {
+            addView(body(getString(R.string.about_text, BuildConfig.VERSION_NAME)))
+            addView(secondaryButton(getString(R.string.view_privacy)) {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://kernferm.github.io/Flipper-Messenger/privacy/")))
             })
         })
@@ -166,22 +178,25 @@ class MainActivity : AppCompatActivity(), MessengerService.Listener {
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
 
     private fun updatePermissions() {
-        fun state(permission: String) = if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) "Granted" else "Required"
+        fun state(permission: String) = if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED)
+            getString(R.string.granted) else getString(R.string.required)
         val bluetooth = if (Build.VERSION.SDK_INT >= 31)
-            "Scan ${state(Manifest.permission.BLUETOOTH_SCAN)}, Connect ${state(Manifest.permission.BLUETOOTH_CONNECT)}"
-        else "Location for BLE scan: ${state(Manifest.permission.ACCESS_FINE_LOCATION)}"
-        permissionState.text = "Bluetooth: $bluetooth\nContacts: ${state(Manifest.permission.READ_CONTACTS)}\nSend SMS: ${state(Manifest.permission.SEND_SMS)}\nReceive new SMS: ${state(Manifest.permission.RECEIVE_SMS)}\nRead stored SMS: Not Required\nPhone/calls: Not Required"
+            getString(R.string.permission_bluetooth_new, state(Manifest.permission.BLUETOOTH_SCAN), state(Manifest.permission.BLUETOOTH_CONNECT))
+        else getString(R.string.permission_bluetooth_old, state(Manifest.permission.ACCESS_FINE_LOCATION))
+        permissionState.text = getString(R.string.permission_summary, bluetooth,
+            state(Manifest.permission.READ_CONTACTS), state(Manifest.permission.SEND_SMS),
+            state(Manifest.permission.RECEIVE_SMS), getString(R.string.not_required))
     }
 
     private fun updateSubscriptions() {
         if (!PermissionManager.smsGranted(this)) {
             subscriptions = emptyList()
-            simSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, listOf("Grant SMS permission first"))
+            simSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, listOf(getString(R.string.grant_sms_first)))
             return
         }
         subscriptions = try { getSystemService(SubscriptionManager::class.java).activeSubscriptionInfoList ?: emptyList() }
         catch (_: SecurityException) { emptyList() }
-        val labels = mutableListOf("Android default SIM")
+        val labels = mutableListOf(getString(R.string.default_sim))
         labels += subscriptions.map { "${it.displayName} (${it.carrierName})" }
         simSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, labels)
         val saved = SecureStore(this).selectedSubscription()
@@ -197,12 +212,13 @@ class MainActivity : AppCompatActivity(), MessengerService.Listener {
     override fun onState(text: String) = runOnUiThread { status.text = text }
     override fun onDevices(devices: List<BluetoothDevice>) = runOnUiThread {
         this.devices = devices
-        devicesButton.text = if (devices.isEmpty()) "Scan for Flipper" else "Choose Flipper (${devices.size} found)"
+        devicesButton.text = if (devices.isEmpty()) getString(R.string.scan_for_flipper)
+            else resources.getQuantityString(R.plurals.flippers_found, devices.size, devices.size)
         devicesButton.setOnClickListener {
             if (this.devices.isEmpty()) service?.startScan()
-            else AlertDialog.Builder(this).setTitle("Choose your Flipper")
+            else AlertDialog.Builder(this).setTitle(R.string.choose_flipper)
                 .setItems(this.devices.map { "${it.name ?: "Flipper"}\n${it.address}" }.toTypedArray()) { _, index -> service?.connect(this.devices[index]) }
-                .setNegativeButton("Rescan") { _, _ -> service?.startScan() }.show()
+                .setNegativeButton(R.string.rescan) { _, _ -> service?.startScan() }.show()
         }
     }
     override fun onEvent(text: String) = runOnUiThread { Toast.makeText(this, text, Toast.LENGTH_LONG).show() }
