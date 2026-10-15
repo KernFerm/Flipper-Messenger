@@ -4,14 +4,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define FMSG_MAGIC 0x47534D46u /* FMSG, little endian */
-#define FMSG_VERSION 1u
-#define FMSG_KEY_SIZE 32u
-#define FMSG_NONCE_SIZE 12u
-#define FMSG_TAG_SIZE 16u
+#define FMSG_MAGIC       0x47534D46u /* FMSG, little endian */
+#define FMSG_VERSION     1u
+#define FMSG_KEY_SIZE    32u
+#define FMSG_NONCE_SIZE  12u
+#define FMSG_TAG_SIZE    16u
 #define FMSG_HEADER_SIZE 40u
 #define FMSG_MAX_PAYLOAD 400u
-#define FMSG_MAX_FRAME (FMSG_HEADER_SIZE + FMSG_MAX_PAYLOAD + FMSG_TAG_SIZE)
+#define FMSG_MAX_FRAME   (FMSG_HEADER_SIZE + FMSG_MAX_PAYLOAD + FMSG_TAG_SIZE)
 
 typedef enum {
     FmsgTypeHello = 1,
@@ -76,4 +76,3 @@ FmsgParseResult fmsg_decode(
     uint64_t minimum_sequence);
 
 bool fmsg_constant_time_equal(const uint8_t* left, const uint8_t* right, size_t length);
-

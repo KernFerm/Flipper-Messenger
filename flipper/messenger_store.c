@@ -4,10 +4,10 @@
 #include <storage/storage.h>
 #include <string.h>
 
-#define STORE_PATH APP_DATA_PATH("messenger.dat")
-#define STORE_TEMP APP_DATA_PATH("messenger.tmp")
-#define STORE_BACKUP APP_DATA_PATH("messenger.bak")
-#define STORE_MAGIC 0x31534D46u
+#define STORE_PATH    APP_DATA_PATH("messenger.dat")
+#define STORE_TEMP    APP_DATA_PATH("messenger.tmp")
+#define STORE_BACKUP  APP_DATA_PATH("messenger.bak")
+#define STORE_MAGIC   0x31534D46u
 #define STORE_VERSION 2u
 
 static uint32_t hash_update(uint32_t hash, const uint8_t* data, size_t length) {
@@ -32,7 +32,8 @@ static bool read_bytes(File* file, void* data, size_t length, uint32_t* hash) {
 
 static bool write_u64(File* file, uint64_t value, uint32_t* hash) {
     uint8_t data[8];
-    for(size_t i = 0; i < sizeof(data); ++i) data[i] = (uint8_t)(value >> (8 * i));
+    for(size_t i = 0; i < sizeof(data); ++i)
+        data[i] = (uint8_t)(value >> (8 * i));
     return write_bytes(file, data, sizeof(data), hash);
 }
 
@@ -40,7 +41,8 @@ static bool read_u64(File* file, uint64_t* value, uint32_t* hash) {
     uint8_t data[8];
     if(!read_bytes(file, data, sizeof(data), hash)) return false;
     *value = 0;
-    for(size_t i = 0; i < sizeof(data); ++i) *value |= (uint64_t)data[i] << (8 * i);
+    for(size_t i = 0; i < sizeof(data); ++i)
+        *value |= (uint64_t)data[i] << (8 * i);
     return true;
 }
 
@@ -86,7 +88,8 @@ bool fmsg_phone_valid(const char* phone) {
 }
 
 static bool store_write_payload(File* file, const FmsgStore* store, uint32_t* hash) {
-    uint32_t header[4] = {STORE_MAGIC, STORE_VERSION, (uint32_t)store->contact_count, (uint32_t)store->quick_count};
+    uint32_t header[4] = {
+        STORE_MAGIC, STORE_VERSION, (uint32_t)store->contact_count, (uint32_t)store->quick_count};
     uint32_t recent_count = (uint32_t)store->recent_count;
     uint32_t inbox_count = (uint32_t)store->inbox_count;
     uint8_t has_key = store->has_key ? 1 : 0;
@@ -95,10 +98,10 @@ static bool store_write_payload(File* file, const FmsgStore* store, uint32_t* ha
        !write_bytes(file, &inbox_count, sizeof(inbox_count), hash) ||
        !write_bytes(file, &has_key, sizeof(has_key), hash) ||
        !write_bytes(file, store->key, sizeof(store->key), hash) ||
-       !write_u64(file, store->tx_sequence, hash) ||
-       !write_u64(file, store->rx_sequence, hash) ||
+       !write_u64(file, store->tx_sequence, hash) || !write_u64(file, store->rx_sequence, hash) ||
        !write_record(file, store->draft_phone, sizeof(store->draft_phone), hash) ||
-       !write_record(file, store->draft_body, sizeof(store->draft_body), hash)) return false;
+       !write_record(file, store->draft_body, sizeof(store->draft_body), hash))
+        return false;
     for(size_t i = 0; i < store->contact_count; ++i)
         if(!write_record(file, &store->contacts[i], sizeof(FmsgContact), hash)) return false;
     for(size_t i = 0; i < store->quick_count; ++i)
@@ -112,7 +115,8 @@ static bool store_write_payload(File* file, const FmsgStore* store, uint32_t* ha
 
 bool fmsg_store_save(const FmsgStore* store) {
     if(!store || store->contact_count > FMSG_CONTACT_MAX || store->quick_count > FMSG_QUICK_MAX ||
-       store->recent_count > FMSG_RECENT_MAX || store->inbox_count > FMSG_INBOX_MAX) return false;
+       store->recent_count > FMSG_RECENT_MAX || store->inbox_count > FMSG_INBOX_MAX)
+        return false;
     Storage* storage = furi_record_open(RECORD_STORAGE);
     storage_common_mkdir(storage, APP_DATA_PATH(""));
     File* file = storage_file_alloc(storage);
@@ -147,14 +151,18 @@ static bool store_read_payload(File* file, FmsgStore* store, uint32_t* hash) {
     uint32_t inbox_count = 0;
     uint8_t has_key;
     if(!read_bytes(file, header, sizeof(header), hash) || header[0] != STORE_MAGIC ||
-       (header[1] != 1u && header[1] != STORE_VERSION) || header[2] > FMSG_CONTACT_MAX || header[3] > FMSG_QUICK_MAX ||
-       !read_bytes(file, &recent_count, sizeof(recent_count), hash) || recent_count > FMSG_RECENT_MAX ||
-       (header[1] >= 2u && (!read_bytes(file, &inbox_count, sizeof(inbox_count), hash) || inbox_count > FMSG_INBOX_MAX)) ||
+       (header[1] != 1u && header[1] != STORE_VERSION) || header[2] > FMSG_CONTACT_MAX ||
+       header[3] > FMSG_QUICK_MAX ||
+       !read_bytes(file, &recent_count, sizeof(recent_count), hash) ||
+       recent_count > FMSG_RECENT_MAX ||
+       (header[1] >= 2u && (!read_bytes(file, &inbox_count, sizeof(inbox_count), hash) ||
+                            inbox_count > FMSG_INBOX_MAX)) ||
        !read_bytes(file, &has_key, sizeof(has_key), hash) || has_key > 1 ||
        !read_bytes(file, store->key, sizeof(store->key), hash) ||
        !read_u64(file, &store->tx_sequence, hash) || !read_u64(file, &store->rx_sequence, hash) ||
        !read_record(file, store->draft_phone, sizeof(store->draft_phone), hash) ||
-       !read_record(file, store->draft_body, sizeof(store->draft_body), hash)) return false;
+       !read_record(file, store->draft_body, sizeof(store->draft_body), hash))
+        return false;
     store->contact_count = header[2];
     store->quick_count = header[3];
     store->recent_count = recent_count;
@@ -185,7 +193,9 @@ bool fmsg_store_load(FmsgStore* store) {
     if(ok) ok = store_read_payload(file, loaded, &hash);
     uint32_t stored_hash = 0;
     if(ok) ok = read_bytes(file, &stored_hash, sizeof(stored_hash), NULL) && stored_hash == hash;
-    if(ok) ok = storage_file_get_error(file) == FSE_OK && storage_file_tell(file) == storage_file_size(file);
+    if(ok)
+        ok = storage_file_get_error(file) == FSE_OK &&
+             storage_file_tell(file) == storage_file_size(file);
     storage_file_close(file);
     storage_file_free(file);
     furi_record_close(RECORD_STORAGE);
@@ -209,4 +219,3 @@ void fmsg_store_clear_private(FmsgStore* store) {
     store->tx_sequence = 0;
     store->rx_sequence = 0;
 }
-

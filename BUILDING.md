@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Official Flipper firmware 1.4.3+ compatible SDK, target f7/API 87.1
+- Official Flipper firmware 1.5.1 compatible SDK, target f7/API 88.2
 - uFBT, or the matching official firmware tree
 - JDK 17 or newer (the verified environment used Microsoft OpenJDK 21)
 - Android SDK 36 and build tools

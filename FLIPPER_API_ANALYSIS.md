@@ -1,6 +1,6 @@
 # Flipper API analysis
 
-Verified against official firmware 1.4.3 source revision `8622f1a2b83d8f4918dd5fa3f43de963f6d6f819` and f7 API 87.1.
+Verified against the official firmware 1.5.1 release SDK and f7 API 88.2.
 
 Selected exported APIs:
 
@@ -14,5 +14,5 @@ Firmware inspection confirmed the serial RX/TX GATT characteristics require auth
 
 The firmware BT service installs its own RPC serial callback during each connection. The application therefore re-registers its bounded callback from the later public BT status notification and marks RPC inactive. Without that lifecycle step, valid app frames would be consumed by the system RPC decoder.
 
-No private symbol or invented API is used. `ufbt` application checking reports target f7/API 87.1.
+No private symbol or invented API is used. `ufbt` application checking reports target f7/API 88.2.
 

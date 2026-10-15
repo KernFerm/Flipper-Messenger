@@ -13,22 +13,26 @@ static uint16_t get_u16(const uint8_t* p) {
 }
 
 static void put_u32(uint8_t* p, uint32_t value) {
-    for(size_t i = 0; i < 4; ++i) p[i] = (uint8_t)(value >> (i * 8));
+    for(size_t i = 0; i < 4; ++i)
+        p[i] = (uint8_t)(value >> (i * 8));
 }
 
 static uint32_t get_u32(const uint8_t* p) {
     uint32_t value = 0;
-    for(size_t i = 0; i < 4; ++i) value |= (uint32_t)p[i] << (i * 8);
+    for(size_t i = 0; i < 4; ++i)
+        value |= (uint32_t)p[i] << (i * 8);
     return value;
 }
 
 static void put_u64(uint8_t* p, uint64_t value) {
-    for(size_t i = 0; i < 8; ++i) p[i] = (uint8_t)(value >> (i * 8));
+    for(size_t i = 0; i < 8; ++i)
+        p[i] = (uint8_t)(value >> (i * 8));
 }
 
 static uint64_t get_u64(const uint8_t* p) {
     uint64_t value = 0;
-    for(size_t i = 0; i < 8; ++i) value |= (uint64_t)p[i] << (i * 8);
+    for(size_t i = 0; i < 8; ++i)
+        value |= (uint64_t)p[i] << (i * 8);
     return value;
 }
 
@@ -39,7 +43,8 @@ static void make_nonce(uint8_t nonce[FMSG_NONCE_SIZE], const FmsgMessage* messag
 
 bool fmsg_constant_time_equal(const uint8_t* left, const uint8_t* right, size_t length) {
     uint8_t difference = 0;
-    for(size_t i = 0; i < length; ++i) difference |= left[i] ^ right[i];
+    for(size_t i = 0; i < length; ++i)
+        difference |= left[i] ^ right[i];
     return difference == 0;
 }
 
@@ -50,7 +55,8 @@ size_t fmsg_encode(
     const uint8_t key[FMSG_KEY_SIZE]) {
     if(!output || !message || message->payload_length > FMSG_MAX_PAYLOAD) return 0;
     const bool encrypted = (message->flags & FmsgFlagEncrypted) != 0;
-    const size_t required = FMSG_HEADER_SIZE + message->payload_length + (encrypted ? FMSG_TAG_SIZE : 0);
+    const size_t required =
+        FMSG_HEADER_SIZE + message->payload_length + (encrypted ? FMSG_TAG_SIZE : 0);
     if(capacity < required) return 0;
 
     put_u32(output, FMSG_MAGIC);
@@ -66,7 +72,8 @@ size_t fmsg_encode(
     memcpy(output + 28, message->session_id, 12);
 
     if(!encrypted) {
-        if(message->payload_length) memcpy(output + FMSG_HEADER_SIZE, message->payload, message->payload_length);
+        if(message->payload_length)
+            memcpy(output + FMSG_HEADER_SIZE, message->payload, message->payload_length);
         return required;
     }
     if(!key || message->sequence == 0) return 0;
@@ -134,4 +141,3 @@ FmsgParseResult fmsg_decode(
     }
     return FmsgParseOk;
 }
-

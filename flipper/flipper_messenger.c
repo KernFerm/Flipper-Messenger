@@ -18,11 +18,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define FMSG_APP_VERSION "0.0.10"
-#define FMSG_BT_KEYS APP_DATA_PATH("bt.keys")
-#define FMSG_RX_SLOTS 16
+#define FMSG_APP_VERSION "0.0.25"
+#define FMSG_BT_KEYS     APP_DATA_PATH("bt.keys")
+#define FMSG_RX_SLOTS    16
 
-typedef enum { ViewMain, ViewList, ViewInput, ViewSettings, ViewText } AppView;
+typedef enum {
+    ViewMain,
+    ViewList,
+    ViewInput,
+    ViewSettings,
+    ViewText
+} AppView;
 typedef enum {
     MenuContacts,
     MenuManual,
@@ -34,7 +40,11 @@ typedef enum {
     MenuSettings,
     MenuAbout,
 } MainMenu;
-typedef enum { EditPhone, EditBody, EditQuick } EditMode;
+typedef enum {
+    EditPhone,
+    EditBody,
+    EditQuick
+} EditMode;
 
 typedef struct {
     uint16_t length;
@@ -153,8 +163,10 @@ static void process_message(MessengerApp* app, const uint8_t* data, size_t lengt
     if(!(message.flags & FmsgFlagEncrypted)) {
         if(message.type == FmsgTypeHello) {
             send_hello(app);
-        } else if(message.type == FmsgTypeProvisionKey && app->allow_provision &&
-                  furi_get_tick() <= app->provision_deadline && message.payload_length == FMSG_KEY_SIZE) {
+        } else if(
+            message.type == FmsgTypeProvisionKey && app->allow_provision &&
+            furi_get_tick() <= app->provision_deadline &&
+            message.payload_length == FMSG_KEY_SIZE) {
             memcpy(app->store.key, message.payload, FMSG_KEY_SIZE);
             app->store.has_key = true;
             app->store.rx_sequence = 0;
@@ -188,15 +200,18 @@ static void process_message(MessengerApp* app, const uint8_t* data, size_t lengt
     }
     case FmsgTypeContactSyncBegin:
         app->staged_count = 0;
-        app->staged_expected =
-            message.payload_length == 1 && message.payload[0] <= FMSG_CONTACT_MAX ? message.payload[0] : SIZE_MAX;
+        app->staged_expected = message.payload_length == 1 &&
+                                       message.payload[0] <= FMSG_CONTACT_MAX ?
+                                   message.payload[0] :
+                                   SIZE_MAX;
         break;
     case FmsgTypeContactEntry: {
         if(message.payload_length < 2 || app->staged_count >= FMSG_CONTACT_MAX) break;
         const uint8_t name_len = message.payload[0];
         const uint8_t phone_len = message.payload[1];
         if(name_len > FMSG_NAME_MAX || phone_len > FMSG_PHONE_MAX ||
-           (size_t)name_len + phone_len + 2 != message.payload_length) break;
+           (size_t)name_len + phone_len + 2 != message.payload_length)
+            break;
         FmsgContact* contact = &app->staged_contacts[app->staged_count];
         memcpy(contact->name, message.payload + 2, name_len);
         contact->name[name_len] = 0;
@@ -256,13 +271,21 @@ static void process_message(MessengerApp* app, const uint8_t* data, size_t lengt
     case FmsgTypeIncomingSms: {
         if(message.payload_length < 3) break;
         const uint8_t sender_len = message.payload[0];
-        const uint16_t body_len = (uint16_t)message.payload[1] | ((uint16_t)message.payload[2] << 8);
-        if(sender_len == 0 || sender_len > FMSG_PHONE_MAX || body_len == 0 || body_len > FMSG_BODY_MAX ||
-           (size_t)sender_len + body_len + 3 != message.payload_length) break;
+        const uint16_t body_len = (uint16_t)message.payload[1] |
+                                  ((uint16_t)message.payload[2] << 8);
+        if(sender_len == 0 || sender_len > FMSG_PHONE_MAX || body_len == 0 ||
+           body_len > FMSG_BODY_MAX || (size_t)sender_len + body_len + 3 != message.payload_length)
+            break;
         if(app->store.inbox_count == FMSG_INBOX_MAX) {
-            memmove(&app->store.inbox[1], &app->store.inbox[0], (FMSG_INBOX_MAX - 1) * sizeof(FmsgRecent));
+            memmove(
+                &app->store.inbox[1],
+                &app->store.inbox[0],
+                (FMSG_INBOX_MAX - 1) * sizeof(FmsgRecent));
         } else {
-            memmove(&app->store.inbox[1], &app->store.inbox[0], app->store.inbox_count * sizeof(FmsgRecent));
+            memmove(
+                &app->store.inbox[1],
+                &app->store.inbox[0],
+                app->store.inbox_count * sizeof(FmsgRecent));
             ++app->store.inbox_count;
         }
         FmsgRecent* incoming = &app->store.inbox[0];
@@ -283,7 +306,8 @@ static void process_message(MessengerApp* app, const uint8_t* data, size_t lengt
 static uint16_t serial_callback(SerialServiceEvent event, void* context) {
     MessengerApp* app = context;
     if(event.event != SerialServiceEventTypeDataReceived || !event.data.buffer ||
-       event.data.size > FMSG_MAX_FRAME) return FMSG_MAX_FRAME;
+       event.data.size > FMSG_MAX_FRAME)
+        return FMSG_MAX_FRAME;
     if(furi_mutex_acquire(app->rx_mutex, 0) != FuriStatusOk) return 0;
     if(app->rx_count < FMSG_RX_SLOTS) {
         RxSlot* slot = &app->rx[app->rx_head];
@@ -324,7 +348,11 @@ static void edit_done(void* context) {
     MessengerApp* app = context;
     if(app->edit_mode == EditPhone) {
         if(!fmsg_phone_valid(app->phone)) {
-            show_text(app, "Invalid number", "Enter 3-15 digits. A leading + and common separators are allowed.", ViewMain);
+            show_text(
+                app,
+                "Invalid number",
+                "Enter 3-15 digits. A leading + and common separators are allowed.",
+                ViewMain);
             return;
         }
     } else if(app->edit_mode == EditQuick && app->edit_quick_index < FMSG_QUICK_MAX) {
@@ -350,11 +378,14 @@ static void start_edit(MessengerApp* app, EditMode mode) {
     if(mode == EditPhone) {
         text_input_set_header_text(app->input, "Recipient phone number");
         text_input_set_minimum_length(app->input, 3);
-        text_input_set_result_callback(app->input, edit_done, app, app->phone, sizeof(app->phone), false);
+        text_input_set_result_callback(
+            app->input, edit_done, app, app->phone, sizeof(app->phone), false);
     } else {
-        text_input_set_header_text(app->input, mode == EditBody ? "Message (max 320)" : "Quick message");
+        text_input_set_header_text(
+            app->input, mode == EditBody ? "Message (max 320)" : "Quick message");
         text_input_set_minimum_length(app->input, 1);
-        text_input_set_result_callback(app->input, edit_done, app, app->body, sizeof(app->body), false);
+        text_input_set_result_callback(
+            app->input, edit_done, app, app->body, sizeof(app->body), false);
     }
     switch_view(app, ViewInput);
 }
@@ -365,7 +396,8 @@ static bool send_current(MessengerApp* app) {
     if(!app->authenticated || !fmsg_phone_valid(app->phone) || !app->body[0]) return false;
     const size_t phone_len = strlen(app->phone);
     const size_t body_len = strlen(app->body);
-    if(phone_len > FMSG_PHONE_MAX || body_len > FMSG_BODY_MAX || body_len + phone_len + 3 > FMSG_MAX_PAYLOAD)
+    if(phone_len > FMSG_PHONE_MAX || body_len > FMSG_BODY_MAX ||
+       body_len + phone_len + 3 > FMSG_MAX_PAYLOAD)
         return false;
     uint64_t request = ((uint64_t)furi_hal_random_get() << 32) | furi_hal_random_get();
     if(!request) request = 1;
@@ -379,9 +411,15 @@ static bool send_current(MessengerApp* app) {
     if(!tx_message(app, &message, true)) return false;
 
     if(app->store.recent_count == FMSG_RECENT_MAX) {
-        memmove(&app->store.recent[1], &app->store.recent[0], (FMSG_RECENT_MAX - 1) * sizeof(FmsgRecent));
+        memmove(
+            &app->store.recent[1],
+            &app->store.recent[0],
+            (FMSG_RECENT_MAX - 1) * sizeof(FmsgRecent));
     } else {
-        memmove(&app->store.recent[1], &app->store.recent[0], app->store.recent_count * sizeof(FmsgRecent));
+        memmove(
+            &app->store.recent[1],
+            &app->store.recent[0],
+            app->store.recent_count * sizeof(FmsgRecent));
         ++app->store.recent_count;
     }
     FmsgRecent* recent = &app->store.recent[0];
@@ -401,12 +439,20 @@ static void list_selected(void* context, uint32_t index) {
     if(index >= 7000) {
         if(index == 7002 && app->selected_inbox < app->store.inbox_count) {
             char detail[FMSG_BODY_MAX + FMSG_PHONE_MAX + 32];
-            snprintf(detail, sizeof(detail), "From: %s\n\n%s", app->store.inbox[app->selected_inbox].phone,
-                     app->store.inbox[app->selected_inbox].body);
+            snprintf(
+                detail,
+                sizeof(detail),
+                "From: %s\n\n%s",
+                app->store.inbox[app->selected_inbox].phone,
+                app->store.inbox[app->selected_inbox].body);
             show_text(app, "Incoming SMS", detail, ViewList);
         } else if(index == 7000 && app->selected_inbox < app->store.inbox_count) {
             if(!fmsg_phone_valid(app->store.inbox[app->selected_inbox].phone)) {
-                show_text(app, "Cannot reply", "This sender does not contain a replyable phone number.", ViewList);
+                show_text(
+                    app,
+                    "Cannot reply",
+                    "This sender does not contain a replyable phone number.",
+                    ViewList);
                 return;
             }
             strlcpy(app->phone, app->store.inbox[app->selected_inbox].phone, sizeof(app->phone));
@@ -429,9 +475,20 @@ static void list_selected(void* context, uint32_t index) {
         }
     } else if(index >= 4000) {
         if(index == 4000) {
-            if(send_current(app)) show_text(app, "Request sent", "The phone accepted the BLE request for processing. SENT and DELIVERED will only appear after Android reports them.", ViewMain);
-            else show_text(app, "Not sent", "Connect and authorize the phone, then enter a valid recipient and message.", ViewMain);
-        } else switch_view(app, ViewMain);
+            if(send_current(app))
+                show_text(
+                    app,
+                    "Request sent",
+                    "The phone accepted the BLE request for processing. SENT and DELIVERED will only appear after Android reports them.",
+                    ViewMain);
+            else
+                show_text(
+                    app,
+                    "Not sent",
+                    "Connect and authorize the phone, then enter a valid recipient and message.",
+                    ViewMain);
+        } else
+            switch_view(app, ViewMain);
     } else if(index >= 3000) {
         const size_t i = index - 3000;
         if(i < app->store.quick_count) {
@@ -453,8 +510,13 @@ static void list_selected(void* context, uint32_t index) {
         if(i < app->store.recent_count) {
             char detail[420];
             const char* statuses[] = {"Requested", "Accepted", "Sent", "Delivered", "Failed"};
-            snprintf(detail, sizeof(detail), "To: %s\nStatus: %s\n\n%s", app->store.recent[i].phone,
-                     statuses[MIN(app->store.recent[i].status, 4)], app->store.recent[i].body);
+            snprintf(
+                detail,
+                sizeof(detail),
+                "To: %s\nStatus: %s\n\n%s",
+                app->store.recent[i].phone,
+                statuses[MIN(app->store.recent[i].status, 4)],
+                app->store.recent[i].body);
             show_text(app, "Outgoing message", detail, ViewList);
         }
     }
@@ -465,28 +527,44 @@ static void prepare_list(MessengerApp* app, uint32_t kind) {
     if(kind == 1) {
         submenu_set_header(app->list_menu, "Synced contacts");
         for(size_t i = 0; i < app->store.contact_count; ++i)
-            submenu_add_item(app->list_menu, app->store.contacts[i].name, 2000 + i, list_selected, app);
-        if(!app->store.contact_count) submenu_add_item(app->list_menu, "No contacts synced", 4999, list_selected, app);
+            submenu_add_item(
+                app->list_menu, app->store.contacts[i].name, 2000 + i, list_selected, app);
+        if(!app->store.contact_count)
+            submenu_add_item(app->list_menu, "No contacts synced", 4999, list_selected, app);
     } else if(kind == 2) {
         submenu_set_header(app->list_menu, "Quick messages");
         for(size_t i = 0; i < app->store.quick_count; ++i)
             submenu_add_item(app->list_menu, app->store.quick[i], 3000 + i, list_selected, app);
         if(app->store.quick_count < FMSG_QUICK_MAX)
-            submenu_add_item(app->list_menu, "+ Add quick message", 3000 + app->store.quick_count, list_selected, app);
+            submenu_add_item(
+                app->list_menu,
+                "+ Add quick message",
+                3000 + app->store.quick_count,
+                list_selected,
+                app);
     } else if(kind == 3) {
         submenu_set_header(app->list_menu, "Recent outgoing");
         for(size_t i = 0; i < app->store.recent_count; ++i)
-            submenu_add_item(app->list_menu, app->store.recent[i].phone, 1000 + i, list_selected, app);
-        if(!app->store.recent_count) submenu_add_item(app->list_menu, "No outgoing messages", 4999, list_selected, app);
+            submenu_add_item(
+                app->list_menu, app->store.recent[i].phone, 1000 + i, list_selected, app);
+        if(!app->store.recent_count)
+            submenu_add_item(app->list_menu, "No outgoing messages", 4999, list_selected, app);
     } else if(kind == 5) {
         submenu_set_header(app->list_menu, "Inbox: select to reply");
         for(size_t i = 0; i < app->store.inbox_count; ++i)
-            submenu_add_item(app->list_menu, app->store.inbox[i].phone, 6000 + i, list_selected, app);
-        if(!app->store.inbox_count) submenu_add_item(app->list_menu, "No forwarded messages", 4999, list_selected, app);
+            submenu_add_item(
+                app->list_menu, app->store.inbox[i].phone, 6000 + i, list_selected, app);
+        if(!app->store.inbox_count)
+            submenu_add_item(app->list_menu, "No forwarded messages", 4999, list_selected, app);
     } else {
         char summary[128];
-        snprintf(summary, sizeof(summary), "To: %s\nMessage: %.75s%s", app->phone[0] ? app->phone : "(none)",
-                 app->body[0] ? app->body : "(empty)", strlen(app->body) > 75 ? "..." : "");
+        snprintf(
+            summary,
+            sizeof(summary),
+            "To: %s\nMessage: %.75s%s",
+            app->phone[0] ? app->phone : "(none)",
+            app->body[0] ? app->body : "(empty)",
+            strlen(app->body) > 75 ? "..." : "");
         submenu_set_header(app->list_menu, summary);
         submenu_add_item(app->list_menu, "SEND NOW", 4000, list_selected, app);
         submenu_add_item(app->list_menu, "Cancel", 4001, list_selected, app);
@@ -522,7 +600,12 @@ static void main_selected(void* context, uint32_t index) {
         switch_view(app, ViewSettings);
         break;
     default:
-        show_text(app, "Flipper Messenger", "Version " FMSG_APP_VERSION "\n\nCompose SMS requests on Flipper Zero. An authorized Android companion sends them using the phone's real SMS service.\n\nBonded BLE + AES-256-GCM application sessions. No inbox, call logs, telemetry, or simulated delivery.\n\nGPL-3.0-or-later.", ViewMain);
+        show_text(
+            app,
+            "Flipper Messenger",
+            "Version " FMSG_APP_VERSION
+            "\n\nCompose SMS requests on Flipper Zero. An authorized Android companion sends them using the phone's real SMS service.\n\nBonded BLE + AES-256-GCM application sessions. No inbox, call logs, telemetry, or simulated delivery.\n\nGPL-3.0-or-later.",
+            ViewMain);
         break;
     }
 }
@@ -532,22 +615,39 @@ static void setting_selected(void* context, uint32_t row) {
     if(row == 0) {
         app->allow_provision = true;
         app->provision_deadline = furi_get_tick() + furi_ms_to_ticks(60000);
-        show_text(app, "Authorization open", "For 60 seconds, press Authorize this phone in the Android app. Keep both apps open.", ViewSettings);
+        show_text(
+            app,
+            "Authorization open",
+            "For 60 seconds, press Authorize this phone in the Android app. Keep both apps open.",
+            ViewSettings);
     } else if(row == 1) {
         bt_forget_bonded_devices(app->bt);
         memset(app->store.key, 0, sizeof(app->store.key));
         app->store.has_key = false;
         app->authenticated = false;
         fmsg_store_save(&app->store);
-        show_text(app, "Phone forgotten", "Bluetooth bonds and the Messenger authorization key were removed.", ViewSettings);
+        show_text(
+            app,
+            "Phone forgotten",
+            "Bluetooth bonds and the Messenger authorization key were removed.",
+            ViewSettings);
     } else if(row == 2) {
         fmsg_store_clear_private(&app->store);
         fmsg_store_save(&app->store);
         app->phone[0] = 0;
         app->body[0] = 0;
-        show_text(app, "Private data cleared", "Contacts, drafts, recent outgoing records, and the authorization key were erased.", ViewSettings);
+        show_text(
+            app,
+            "Private data cleared",
+            "Contacts, drafts, recent outgoing records, and the authorization key were erased.",
+            ViewSettings);
     } else {
-        show_text(app, "About", "Flipper Messenger v" FMSG_APP_VERSION "\n\nAndroid sends real SMS for any valid number entered on Flipper. Bluetooth must be connected and authorized.\n\nGPL-3.0-or-later.", ViewSettings);
+        show_text(
+            app,
+            "About",
+            "Flipper Messenger v" FMSG_APP_VERSION
+            "\n\nAndroid sends real SMS for any valid number entered on Flipper. Bluetooth must be connected and authorized.\n\nGPL-3.0-or-later.",
+            ViewSettings);
     }
 }
 
@@ -570,7 +670,8 @@ static bool on_back(void* context) {
 
 static void tick(void* context) {
     MessengerApp* app = context;
-    if(app->allow_provision && furi_get_tick() > app->provision_deadline) app->allow_provision = false;
+    if(app->allow_provision && furi_get_tick() > app->provision_deadline)
+        app->allow_provision = false;
     if(app->hello_pending && app->connected) send_hello(app);
     for(size_t n = 0; n < FMSG_RX_SLOTS; ++n) {
         RxSlot slot = {0};
@@ -605,8 +706,9 @@ static MessengerApp* app_alloc(void) {
     app->widget = widget_alloc();
     app->text = furi_string_alloc();
     app->rx_mutex = furi_mutex_alloc(FuriMutexTypeNormal);
-    if(!app->gui || !app->bt || !app->dispatcher || !app->main_menu || !app->list_menu || !app->input ||
-       !app->settings || !app->widget || !app->text || !app->rx_mutex) return app;
+    if(!app->gui || !app->bt || !app->dispatcher || !app->main_menu || !app->list_menu ||
+       !app->input || !app->settings || !app->widget || !app->text || !app->rx_mutex)
+        return app;
 
     submenu_add_item(app->main_menu, "Contacts", MenuContacts, main_selected, app);
     submenu_add_item(app->main_menu, "Manual number", MenuManual, main_selected, app);
@@ -637,8 +739,8 @@ static MessengerApp* app_alloc(void) {
 }
 
 static bool app_valid(const MessengerApp* app) {
-    return app && app->gui && app->bt && app->dispatcher && app->main_menu && app->list_menu && app->input &&
-           app->settings && app->widget && app->text && app->rx_mutex;
+    return app && app->gui && app->bt && app->dispatcher && app->main_menu && app->list_menu &&
+           app->input && app->settings && app->widget && app->text && app->rx_mutex;
 }
 
 static void app_free(MessengerApp* app) {
@@ -685,9 +787,11 @@ int32_t flipper_messenger_app(void* p) {
     bt_keys_storage_set_storage_path(app->bt, FMSG_BT_KEYS);
     app->profile = bt_profile_start(app->bt, ble_profile_serial, NULL);
     if(!app->profile) {
-        show_text(app, "Bluetooth error", "Could not start the official BLE serial profile.", ViewMain);
+        show_text(
+            app, "Bluetooth error", "Could not start the official BLE serial profile.", ViewMain);
     } else {
-        ble_profile_serial_set_event_callback(app->profile, FMSG_RX_SLOTS * FMSG_MAX_FRAME, serial_callback, app);
+        ble_profile_serial_set_event_callback(
+            app->profile, FMSG_RX_SLOTS * FMSG_MAX_FRAME, serial_callback, app);
         ble_profile_serial_set_rpc_active(app->profile, false);
         bt_set_status_changed_callback(app->bt, bt_status, app);
         furi_hal_bt_start_advertising();
@@ -698,4 +802,3 @@ int32_t flipper_messenger_app(void* p) {
     app_free(app);
     return 0;
 }
-

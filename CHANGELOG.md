@@ -1,5 +1,11 @@
 # Changelog
 
+## Flipper 0.0.25
+
+- Rebuilt the Flipper application against official firmware 1.5.1 and f7 API 88.2.
+- Updated the website to download the new 0.0.25 `.fap`.
+- Kept the messaging protocol and stored-data format compatible with Flipper 0.0.10.
+
 ## Android 0.1.1 / Flipper 0.0.10
 
 - Added an in-app language selector with 25 Android interface languages.

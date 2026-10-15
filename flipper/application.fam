@@ -6,7 +6,7 @@ App(
     requires=["gui", "storage", "bt"],
     stack_size=4096,
     fap_category="Tools",
-    fap_version="0.0.10",
+    fap_version="0.0.25",
     fap_description="Compose SMS requests for an authorized Android phone",
     fap_author="KernFerm",
     fap_weburl="https://github.com/KernFerm/Flipper-Messenger",

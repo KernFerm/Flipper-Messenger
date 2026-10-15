@@ -6,12 +6,12 @@
 #include "messenger_protocol.h"
 
 #define FMSG_CONTACT_MAX 50
-#define FMSG_NAME_MAX 31
-#define FMSG_PHONE_MAX 23
-#define FMSG_BODY_MAX 320
-#define FMSG_QUICK_MAX 12
-#define FMSG_RECENT_MAX 20
-#define FMSG_INBOX_MAX 10
+#define FMSG_NAME_MAX    31
+#define FMSG_PHONE_MAX   23
+#define FMSG_BODY_MAX    320
+#define FMSG_QUICK_MAX   12
+#define FMSG_RECENT_MAX  20
+#define FMSG_INBOX_MAX   10
 
 typedef struct {
     char name[FMSG_NAME_MAX + 1];
@@ -47,4 +47,3 @@ bool fmsg_store_load(FmsgStore* store);
 bool fmsg_store_save(const FmsgStore* store);
 void fmsg_store_clear_private(FmsgStore* store);
 bool fmsg_phone_valid(const char* phone);
-
