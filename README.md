@@ -2,7 +2,7 @@
 
 Flipper Messenger turns a Flipper Zero into a small, smartwatch-style composer for legitimate SMS messages sent by the owner's authorized Android phone. The Flipper has no cellular modem: the included Android companion performs the real SMS operation and returns only actual Android/carrier status.
 
-Current published versions: Flipper application **0.0.25** and Android companion **0.1.1** (Google Play version code 46).
+Current published versions: Flipper application **0.0.25** and Android companion **0.1.3** (Google Play version code 48).
 
 [Google Play Store: Flipper Messenger](https://play.google.com/store/apps/details?id=com.kernferm.flippermessenger)
 
