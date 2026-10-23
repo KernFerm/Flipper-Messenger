@@ -4,6 +4,8 @@ Flipper Messenger turns a Flipper Zero into a small, smartwatch-style composer f
 
 Current published versions: Flipper application **0.0.25** and Android companion **0.1.1** (Google Play version code 46).
 
+[Google Play Store: Flipper Messenger](https://play.google.com/store/apps/details?id=com.kernferm.flippermessenger)
+
 ## What works
 
 - official-firmware BLE serial transport with PIN bonding;
